@@ -1,32 +1,31 @@
 <script setup lang="ts">
-import { useAuthStore } from "~/store/auth";
-
 const appConfig = useAppConfig();
 const appLinks = useAppLinks();
 const emit = defineEmits<{ menuClick: [event: Event] }>();
-const router = useRouter();
 const { authenticated } = storeToRefs(useAuthStore());
-const { logUserOut } = useAuthStore();
-
-const logout = () => {
-  logUserOut();
-  router.push('/login');
-};
 const menuClick = (event: Event) => emit('menuClick', event);
+
+const AppTitle = () => {
+  const titleArr = (appConfig.title as string).split(' ');
+
+  return h('span', [titleArr[0], h('span', { class: 'text-primary' }, [titleArr[1]])]);
+}
 </script>
 
 <template>
-  <header>
-    <UContainer class="flex items-center gap-x-4 py-4">
-      <UButton v-if="authenticated"
-               color="primary"
-               icon="i-mdi-menu"
-               size="sm"
-               square
-               variant="ghost"
-               @click="menuClick" />
-      <ULink active-class="text-primary" :to="appLinks.index.to">{{ appConfig.title }}</ULink>
-      <UButton v-if="authenticated" class="ml-auto" @click="logout">Выход</UButton>
+  <header class="sticky top-0 z-50 -mb-px bg-white/75 border-b border-gray-200 dark:border-gray-800 backdrop-blur">
+    <UContainer class="flex justify-between items-center gap-3 py-4">
+      <div class="lg:flex-1 flex items-center gap-1.5">
+        <ULink
+            class="flex-shrink-0 flex items-end gap-1.5 text-xl font-bold text-gray-900 dark:text-white"
+            :to="appLinks.index.to"
+        >
+          <AppTitle />
+        </ULink>
+      </div>
+      <div class="lg:flex-1 flex justify-end items-center gap-1.5">
+        <UButton v-if="authenticated" icon="i-mdi-menu" square variant="ghost" @click="menuClick" />
+      </div>
     </UContainer>
   </header>
 </template>

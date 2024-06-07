@@ -1,23 +1,20 @@
 <script setup lang="ts">
+import type { BreadcrumbLink } from "#ui/types";
+
 const appLinks = useAppLinks();
-const {
-  pending,
-  data: animeListData
-} = await useLazyAsyncData('animeList', () => $fetch('/api/anime-list', { method: 'get' }));
+const { animeList, animeListLoading } = storeToRefs(useAnimeListStore());
+const { getAnimeList } = useAnimeListStore();
 
 const animeListColumns = [
   { key: 'id', label: '#' },
   { key: 'name', label: 'Название', sortable: true },
   { key: 'episodes', label: 'Эпизоды' },
-  { key: 'releaseDate', label: 'Дата выпуска', sortable: true },
-  { key: 'finishDate', label: 'Дата окончания', sortable: true }
+  { key: 'date_release', label: 'Дата выпуска', sortable: true },
+  { key: 'date_finish', label: 'Дата окончания', sortable: true }
 ];
 const cardUi = { body: { padding: '' } };
-const filter = reactive({ name: '' });
-const page = ref(1);
 const pageCount = 10;
 
-const animeList = computed(() => animeListData.value || []);
 const animeListFiltered = computed(() => {
   if (!filter.name) {
     return animeList.value;
@@ -28,10 +25,14 @@ const animeListFiltered = computed(() => {
   });
 });
 const animeListRows = computed(() => animeListFiltered.value.slice((page.value - 1) * pageCount, (page.value) * pageCount));
-const breadcrumbs = computed(() => [
+const breadcrumbs = computed<BreadcrumbLink[]>(() => [
   appLinks.value.index,
   { label: appLinks.value.list.label, icon: appLinks.value.list.icon }
 ]);
+
+const filter = reactive({ name: '' });
+const page = ref(1);
+const sort = ref<{ column: string; direction: "asc" | "desc" }>({ column: 'date_release', direction: 'asc' });
 
 const dateFormat = (value: string | undefined) => {
   if (value) {
@@ -42,6 +43,10 @@ const dateFormat = (value: string | undefined) => {
 
   return undefined;
 };
+
+watch(() => sort.value, (value) => {
+  getAnimeList(value);
+}, { immediate: true });
 </script>
 
 <template>
@@ -51,9 +56,16 @@ const dateFormat = (value: string | undefined) => {
       <template #header>
         <UInput v-model="filter.name" placeholder="Фильтр названий..." />
       </template>
-      <UTable :columns="animeListColumns" :loading="pending" :rows="animeListRows">
-        <template #releaseDate-data="{ row }">{{ dateFormat(row.releaseDate) }}</template>
-        <template #finishDate-data="{ row }">{{ dateFormat(row.finishDate) }}</template>
+      <UTable v-model:sort="sort"
+              :columns="animeListColumns"
+              :loading="animeListLoading"
+              :rows="animeListRows"
+              sort-asc-icon="i-heroicons-arrow-up-20-solid"
+              :sort-button="{ icon: 'i-heroicons-sparkles-20-solid', color: 'primary', variant: 'outline', size: '2xs', square: false, ui: { rounded: 'rounded-full' } }"
+              sort-desc-icon="i-heroicons-arrow-down-20-solid"
+              sort-mode="manual">
+        <template #date_release-data="{ row }">{{ dateFormat(row.date_release) }}</template>
+        <template #date_finish-data="{ row }">{{ dateFormat(row.date_finish) }}</template>
       </UTable>
       <template v-if="animeListFiltered.length > pageCount" #footer>
         <div class="flex justify-end">

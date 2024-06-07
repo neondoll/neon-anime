@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { HorizontalNavigationLink } from "#ui/types";
+
 const appLinks = useAppLinks();
 
-const links = computed(() => [appLinks.value.list, appLinks.value.calendar]);
+const links = computed<HorizontalNavigationLink[]>(() => [appLinks.value.list, appLinks.value.calendar]);
 </script>
 
 <template>

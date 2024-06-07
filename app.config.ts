@@ -1,4 +1,4 @@
 export default defineAppConfig({
-  title: 'NeonAnimeList',
+  title: 'Neon Anime',
   ui: { icons: { dynamic: true } }
 })
