@@ -3,6 +3,5 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@nuxt/ui', "@nuxtjs/supabase", '@pinia/nuxt', '@samk-dev/nuxt-vcalendar'],
   pinia: { storesDirs: ['./stores/**'] },
-  runtimeConfig: { public: { baseUrl: process.env.BASE_URL || 'http://localhost:3000' } },
   supabase: { url: process.env.SUPABASE_URL, key: process.env.SUPABASE_KEY }
 })
