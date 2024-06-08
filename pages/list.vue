@@ -51,19 +51,21 @@ watch(() => sort.value, (value) => {
 
 <template>
   <UContainer class="py-4">
-    <UBreadcrumb divider="i-heroicons-chevron-right-20-solid" :links="breadcrumbs" />
+    <UBreadcrumb :links="breadcrumbs" />
     <UCard class="mt-4" :ui="cardUi">
       <template #header>
         <UInput v-model="filter.name" placeholder="Фильтр названий..." />
       </template>
-      <UTable v-model:sort="sort"
-              :columns="animeListColumns"
-              :loading="animeListLoading"
-              :rows="animeListRows"
-              sort-asc-icon="i-heroicons-arrow-up-20-solid"
-              :sort-button="{ icon: 'i-heroicons-sparkles-20-solid', color: 'primary', variant: 'outline', size: '2xs', square: false, ui: { rounded: 'rounded-full' } }"
-              sort-desc-icon="i-heroicons-arrow-down-20-solid"
-              sort-mode="manual">
+      <UTable
+          v-model:sort="sort"
+          :columns="animeListColumns"
+          :loading="animeListLoading"
+          :rows="animeListRows"
+          sort-asc-icon="i-heroicons-arrow-up-20-solid"
+          :sort-button="{ icon: 'i-heroicons-sparkles-20-solid', color: 'primary', variant: 'outline', size: '2xs', square: false, ui: { rounded: 'rounded-full' } }"
+          sort-desc-icon="i-heroicons-arrow-down-20-solid"
+          sort-mode="manual"
+      >
         <template #date_release-data="{ row }">{{ dateFormat(row.date_release) }}</template>
         <template #date_finish-data="{ row }">{{ dateFormat(row.date_finish) }}</template>
       </UTable>

@@ -7,7 +7,7 @@ watch(() => authenticated.value, (value) => {
   if (!value) {
     isOpen.value = false;
   }
-})
+});
 </script>
 
 <template>

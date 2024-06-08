@@ -3,13 +3,12 @@ import { useScreens } from "vue-screen-utils";
 import type { BreadcrumbLink } from "#ui/types";
 
 const appLinks = useAppLinks();
+const colorMode = useColorMode();
 const { animeList } = storeToRefs(useAnimeListStore());
 const { getAnimeList } = useAnimeListStore();
 const { mapCurrent } = useScreens({ xs: '0px', sm: '534px', md: '800px', lg: '1066px' });
 
-const calendar = ref();
 const calendarColors = ['blue', /*'gray',*/ 'green', 'indigo', 'orange', 'pink', 'purple', 'red', 'teal', 'yellow'];
-const calendarColumns = mapCurrent({ sm: 2, md: 3, lg: 4 }, 1);
 
 const breadcrumbs = computed<BreadcrumbLink[]>(() => [
   appLinks.value.index,
@@ -29,6 +28,10 @@ const calendarAttributes = computed(() => [
         }
       }))
 ]);
+const isDark = computed(() => colorMode.value === 'dark');
+
+const calendar = ref();
+const calendarColumns = mapCurrent({ sm: 2, md: 3, lg: 4 }, 1);
 
 const calendarMoveToday = () => {
   if (calendar.value) {
@@ -43,13 +46,19 @@ onMounted(() => {
 
 <template>
   <UContainer class="py-4">
-    <UBreadcrumb divider="i-heroicons-chevron-right-20-solid" :links="breadcrumbs" />
+    <UBreadcrumb :links="breadcrumbs" />
     <ClientOnly>
       <div class="flex mt-4">
-        <VCalendar :attributes="calendarAttributes" class="mx-auto" :columns="calendarColumns" ref="calendar">
+        <VCalendar
+            :attributes="calendarAttributes"
+            class="mx-auto"
+            :columns="calendarColumns"
+            :is-dark="isDark"
+            ref="calendar"
+        >
           <template #footer>
             <div class="w-full px-4 pb-3">
-              <UButton block @click="calendarMoveToday">Сегодня</UButton>
+              <UButton block label="Сегодня" @click="calendarMoveToday" />
             </div>
           </template>
         </VCalendar>

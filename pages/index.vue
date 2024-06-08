@@ -3,7 +3,9 @@ import type { HorizontalNavigationLink } from "#ui/types";
 
 const appLinks = useAppLinks();
 
-const links = computed<HorizontalNavigationLink[]>(() => [appLinks.value.list, appLinks.value.calendar]);
+const links = computed<HorizontalNavigationLink[]>(() => {
+  return [appLinks.value.list, appLinks.value.calendar];
+});
 </script>
 
 <template>

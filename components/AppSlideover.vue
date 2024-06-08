@@ -33,7 +33,7 @@ const logout = () => {
           <span class="group-hover:text-primary relative">{{ link.label }}</span>
         </template>
       </UVerticalNavigation>
-      <UButton v-if="authenticated" block class="mt-4" @click="logout">Выход</UButton>
+      <UButton v-if="authenticated" block class="mt-4" label="Выход" @click="logout" />
     </div>
   </USlideover>
 </template>

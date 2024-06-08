@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { object, string } from 'yup';
-import { useAuthStore } from "~/stores/auth";
 import type { FormSubmitEvent } from '#ui/types';
 import type { InferType } from 'yup';
 
@@ -30,14 +29,14 @@ const onSubmit = async (event: FormSubmitEvent<Schema>) => {
   <UContainer class="py-4">
     <UCard class="max-w-lg mx-auto">
       <h1 class="text-2xl font-bold text-center text-primary">Авторизация</h1>
-      <UForm :schema="schema" :state="state" class="mt-6 space-y-4" @submit="onSubmit">
+      <UForm class="mt-6 space-y-4" :schema="schema" :state="state" @submit="onSubmit">
         <UFormGroup label="Email" name="email">
           <UInput v-model="state.email" />
         </UFormGroup>
         <UFormGroup label="Пароль" name="password">
           <UInput v-model="state.password" type="password" />
         </UFormGroup>
-        <UButton block type="submit">Войти</UButton>
+        <UButton block label="Войти" type="submit" />
       </UForm>
     </UCard>
   </UContainer>
