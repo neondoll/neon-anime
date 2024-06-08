@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { object, string, type InferType } from 'yup';
+import { object, string } from 'yup';
 import { useAuthStore } from "~/stores/auth";
 import type { FormSubmitEvent } from '#ui/types';
+import type { InferType } from 'yup';
 
 const appLinks = useAppLinks();
 const router = useRouter();
