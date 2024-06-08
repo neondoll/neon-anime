@@ -3,21 +3,12 @@ import type { VerticalNavigationLink } from "#ui/types";
 
 const appLinks = useAppLinks();
 const modelValue = defineModel({ default: false });
-const router = useRouter();
-const user = useSupabaseUser();
-const { authenticated } = storeToRefs(useAuthStore());
+const { user } = storeToRefs(useAuthStore());
 const { signOut } = useAuthStore();
 
 const links = computed<VerticalNavigationLink[]>(() => {
   return [appLinks.value.index, appLinks.value.list, appLinks.value.calendar];
 });
-
-const logout = () => {
-  signOut().then(() => {
-    router.push(appLinks.value.login.to);
-    modelValue.value = false;
-  });
-};
 </script>
 
 <template>
@@ -46,7 +37,7 @@ const logout = () => {
           <span class="group-hover:text-primary relative">{{ link.label }}</span>
         </template>
       </UVerticalNavigation>
-      <UButton v-if="authenticated" block class="mt-4" label="Выход" @click="logout" />
+      <UButton v-if="user" block class="mt-4" label="Выход" @click="signOut" />
     </UCard>
   </USlideover>
 </template>

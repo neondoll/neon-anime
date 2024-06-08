@@ -3,24 +3,25 @@ import { object, string } from 'yup';
 import type { FormSubmitEvent } from '#ui/types';
 import type { InferType } from 'yup';
 
-const appLinks = useAppLinks();
-const router = useRouter();
+const { signInLoading, user } = storeToRefs(useAuthStore());
+const { signIn } = useAuthStore();
+
 const schema = object({
   email: string().email('Invalid email').required('Required'),
   password: string().min(8, 'Must be at least 8 characters').required('Required')
 });
-const { authenticated } = storeToRefs(useAuthStore());
-const { signInWithPassword } = useAuthStore();
 
 type Schema = InferType<typeof schema>;
 
 const state = reactive({ email: undefined, password: undefined });
 
 const onSubmit = async (event: FormSubmitEvent<Schema>) => {
-  await signInWithPassword(await event.data);
+  const credentials = await event.data;
 
-  if (authenticated.value) {
-    await router.push(appLinks.value.index.to);
+  await signIn(credentials);
+
+  if (user.value) {
+    await navigateTo('/');
   }
 };
 </script>
@@ -36,7 +37,7 @@ const onSubmit = async (event: FormSubmitEvent<Schema>) => {
         <UFormGroup label="Пароль" name="password">
           <UInput v-model="state.password" type="password" />
         </UFormGroup>
-        <UButton block label="Войти" type="submit" />
+        <UButton block label="Войти" :loading="signInLoading" type="submit" />
       </UForm>
     </UCard>
   </UContainer>

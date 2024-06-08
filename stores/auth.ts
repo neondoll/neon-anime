@@ -6,31 +6,33 @@ interface UserPayloadInterface {
 }
 
 export const useAuthStore = defineStore('auth', () => {
+  // const session = useSupabaseSession();
   const supabase = useSupabaseClient();
+  const user = useSupabaseUser();
 
-  const authenticated = ref(false);
-  const loading = ref(false);
+  const signInLoading = ref(false);
 
-  const signInWithPassword = async ({ email, password }: UserPayloadInterface) => {
-    loading.value = true;
+  const signIn = async ({ email, password }: UserPayloadInterface) => {
+    signInLoading.value = true;
+
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    loading.value = false;
 
     if (error) {
-      console.log(error);
-    } else {
-      authenticated.value = true;
+      console.error(error);
     }
+
+    signInLoading.value = false;
   };
   const signOut = async () => {
-    let { error } = await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
 
     if (error) {
-      console.log(error);
-    } else {
-      authenticated.value = false;
+      console.error(error);
+      return;
     }
+
+    await navigateTo('/login');
   };
 
-  return { authenticated, loading, signInWithPassword, signOut };
+  return { signIn, signInLoading, signOut, user };
 });
