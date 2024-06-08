@@ -6,16 +6,6 @@ on:
     branches: [ "main" ]
 
 jobs:
-  # Create .env job
-  create_env_file:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Create .env file
-        uses: ozaytsev86/create-env-file@v1
-        with:
-          ENV_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          ENV_SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-
   # Build job
   build:
     runs-on: ubuntu-latest
@@ -26,6 +16,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version-file: .nvmrc
+      - uses: ozaytsev86/create-env-file@v1
+        with:
+          ENV_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          ENV_SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       # Pick your own package manager and build script
       - run: npm install
       - run: npx nuxt build --preset github_pages
