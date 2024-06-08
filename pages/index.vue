@@ -8,7 +8,7 @@ const links = computed<HorizontalNavigationLink[]>(() => [appLinks.value.list, a
 
 <template>
   <UContainer class="flex py-4">
-    <UHorizontalNavigation :links="links" :ui="{ wrapper: 'inline-flex w-auto mx-auto' }">
+    <UHorizontalNavigation class="justify-center" :links="links">
       <template #default="{ link }">
         <span class="group-hover:text-primary relative">{{ link.label }}</span>
       </template>

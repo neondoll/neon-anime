@@ -37,7 +37,7 @@ const calendarMoveToday = () => {
 };
 
 onMounted(() => {
-  getAnimeList();
+  getAnimeList({ column: 'date_release', direction: 'asc' });
 });
 </script>
 
