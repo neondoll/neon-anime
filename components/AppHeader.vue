@@ -5,7 +5,7 @@ import { useAuthStore } from "~/stores/auth";
 const appConfig = useAppConfig();
 const appLinks = useAppLinks();
 const emit = defineEmits<{ menuClick: [event: Event] }>();
-const { authenticated } = storeToRefs(useAuthStore());
+const { user } = storeToRefs(useAuthStore());
 
 const menuClick = (event: Event) => emit('menuClick', event);
 
@@ -29,7 +29,7 @@ const AppTitle = () => {
       </div>
       <div class="lg:flex-1 flex justify-end items-center gap-1.5">
         <AppColorModeButton />
-        <UButton v-if="authenticated" color="gray" icon="i-heroicons-bars-3-20-solid" variant="ghost" @click="menuClick" />
+        <UButton v-if="user" color="gray" icon="i-heroicons-bars-3-20-solid" variant="ghost" @click="menuClick" />
       </div>
     </UContainer>
   </header>

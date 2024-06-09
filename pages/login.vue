@@ -7,8 +7,8 @@ import type { InferType } from 'yup';
 
 const appLinks = useAppLinks();
 const router = useRouter();
-const { authenticated, signInLoading } = storeToRefs(useAuthStore());
 const { signIn } = useAuthStore();
+const { signInLoading, user } = storeToRefs(useAuthStore());
 
 const schema = object({
   email: string().email('Invalid email').required('Required'),
@@ -20,11 +20,9 @@ type Schema = InferType<typeof schema>;
 const state = reactive({ email: undefined, password: undefined });
 
 const onSubmit = async (event: FormSubmitEvent<Schema>) => {
-  const credentials = await event.data;
+  await signIn(event.data);
 
-  await signIn(credentials);
-
-  if (authenticated) {
+  if (user) {
     await router.push(appLinks.value.index.to);
   }
 };
