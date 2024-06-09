@@ -6,18 +6,19 @@ import type { Sort } from "~/types/types";
 
 const appLinks = useAppLinks();
 const { animeList, animeListLoading } = storeToRefs(useAnimeListStore());
-const { getAnimeList } = useAnimeListStore();
+const { getAnimeList, labels } = useAnimeListStore();
 
-const animeListColumns = [
-  { key: 'id', label: '#' },
-  { key: 'name', label: 'Название', sortable: true },
-  { key: 'episodes', label: 'Эпизоды' },
-  { key: 'date_release', label: 'Дата выпуска', sortable: true },
-  { key: 'date_finish', label: 'Дата окончания', sortable: true }
-];
-const cardUi = { body: { padding: '' } };
 const pageCount = 10;
 
+const animeListColumns = computed(() => {
+  return [
+    { key: 'id', label: labels.id },
+    { key: 'name', label: labels.name, sortable: true },
+    { key: 'episodes', label: labels.episodes },
+    { key: 'date_release', label: labels.date_release, sortable: true },
+    { key: 'date_finish', label: labels.date_finish, sortable: true }
+  ];
+})
 const animeListFiltered = computed(() => {
   if (!filter.name) {
     return animeList.value;
@@ -34,6 +35,7 @@ const breadcrumbs = computed<BreadcrumbLink[]>(() => [
 ]);
 
 const filter = reactive({ name: '' });
+const modalAnimeAddIsOpen = ref(false);
 const page = ref(1);
 const sort = ref<Sort>({ column: 'date_release', direction: 'asc' });
 
@@ -55,9 +57,10 @@ watch(() => sort.value, (value) => {
 <template>
   <UContainer class="py-4">
     <UBreadcrumb :links="breadcrumbs" />
-    <UCard class="mt-4" :ui="cardUi">
+    <UCard class="mt-4" :ui="{ body: { padding: '' }, header: { base: 'flex gap-4' } }">
       <template #header>
-        <UInput v-model="filter.name" placeholder="Фильтр названий..." />
+        <UButton icon="i-heroicons-plus" @click="modalAnimeAddIsOpen = true" />
+        <UInput v-model="filter.name" class="flex-1" placeholder="Фильтр названий..." />
       </template>
       <UTable
           v-model:sort="sort"
@@ -78,5 +81,6 @@ watch(() => sort.value, (value) => {
         </div>
       </template>
     </UCard>
+    <ModalAnimeAdd v-model="modalAnimeAddIsOpen" @success="getAnimeList(sort)" />
   </UContainer>
 </template>
