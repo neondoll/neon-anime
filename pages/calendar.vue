@@ -17,6 +17,8 @@ const breadcrumbs = computed<BreadcrumbLink[]>(() => [
   { label: appLinks.value.calendar.label, icon: appLinks.value.calendar.icon }
 ]);
 const calendarAttributes = computed(() => [
+  // { key: 'today', content: { color: 'green', style: { fontStyle: 'italic' } }, dates: new Date() },
+  { key: 'today', highlight: 'gray', dates: new Date() },
   ...animeList.value
       .filter((animeItem) => Boolean(animeItem.date_release || animeItem.date_finish))
       .map((animeItem, animeIndex) => ({
@@ -28,8 +30,6 @@ const calendarAttributes = computed(() => [
           end: new Date((animeItem.date_finish || animeItem.date_release) as string)
         }
       })),
-  // { key: 'today', content: { color: 'green', style: { fontStyle: 'italic' } }, dates: new Date() },
-  { key: 'today', highlight: 'gray', dates: new Date() }
 ]);
 const isDark = computed(() => colorMode.value === 'dark');
 
