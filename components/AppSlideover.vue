@@ -1,14 +1,22 @@
 <script setup lang="ts">
+import useAppLinks from "~/composables/useAppLinks";
+import { useAuthStore } from "~/stores/auth";
 import type { VerticalNavigationLink } from "#ui/types";
 
 const appLinks = useAppLinks();
 const modelValue = defineModel({ default: false });
-const { user } = storeToRefs(useAuthStore());
+const router = useRouter();
+const { authenticated, user } = storeToRefs(useAuthStore());
 const { signOut } = useAuthStore();
 
 const links = computed<VerticalNavigationLink[]>(() => {
   return [appLinks.value.index, appLinks.value.list, appLinks.value.calendar];
 });
+
+const logout = async () => {
+  await signOut();
+  await router.push(appLinks.value.login.to);
+}
 </script>
 
 <template>
@@ -37,7 +45,7 @@ const links = computed<VerticalNavigationLink[]>(() => {
           <span class="group-hover:text-primary relative">{{ link.label }}</span>
         </template>
       </UVerticalNavigation>
-      <UButton v-if="user" block class="mt-4" label="Выход" @click="signOut" />
+      <UButton v-if="authenticated" block class="mt-4" label="Выход" @click="logout" />
     </UCard>
   </USlideover>
 </template>

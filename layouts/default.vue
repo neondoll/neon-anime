@@ -1,9 +1,11 @@
 <script setup lang="ts">
-const { user } = storeToRefs(useAuthStore());
+import { useAuthStore } from "~/stores/auth";
+
+const { authenticated } = storeToRefs(useAuthStore());
 
 const isOpen = ref(false);
 
-watch(() => user.value, (value) => {
+watch(() => authenticated.value, (value) => {
   if (!value) {
     isOpen.value = false;
   }
@@ -13,7 +15,7 @@ watch(() => user.value, (value) => {
 <template>
   <div class="flex flex-col min-h-screen">
     <AppHeader @menuClick="isOpen = true" />
-    <AppSlideover v-if="user" v-model="isOpen" />
+    <AppSlideover v-if="authenticated" v-model="isOpen" />
     <AppMain>
       <slot />
     </AppMain>

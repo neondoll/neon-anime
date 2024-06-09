@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import useAppLinks from "~/composables/useAppLinks";
 import { object, string } from 'yup';
+import { useAuthStore } from "~/stores/auth";
 import type { FormSubmitEvent } from '#ui/types';
 import type { InferType } from 'yup';
 
-const { signInLoading, user } = storeToRefs(useAuthStore());
+const appLinks = useAppLinks();
+const router = useRouter();
+const { authenticated, signInLoading } = storeToRefs(useAuthStore());
 const { signIn } = useAuthStore();
 
 const schema = object({
@@ -20,8 +24,8 @@ const onSubmit = async (event: FormSubmitEvent<Schema>) => {
 
   await signIn(credentials);
 
-  if (user.value) {
-    await navigateTo('/');
+  if (authenticated) {
+    await router.push(appLinks.value.index.to);
   }
 };
 </script>

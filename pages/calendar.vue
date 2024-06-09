@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import useAppLinks from "~/composables/useAppLinks";
+import { useAnimeListStore } from "~/stores/anime-list";
 import { useScreens } from "vue-screen-utils";
 import type { BreadcrumbLink } from "#ui/types";
 

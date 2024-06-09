@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import useAppLinks from "~/composables/useAppLinks";
+import { useAnimeListStore } from "~/stores/anime-list";
 import type { BreadcrumbLink } from "#ui/types";
+import type { Sort } from "~/types/types";
 
 const appLinks = useAppLinks();
 const { animeList, animeListLoading } = storeToRefs(useAnimeListStore());
@@ -32,7 +35,7 @@ const breadcrumbs = computed<BreadcrumbLink[]>(() => [
 
 const filter = reactive({ name: '' });
 const page = ref(1);
-const sort = ref<{ column: string; direction: "asc" | "desc" }>({ column: 'date_release', direction: 'asc' });
+const sort = ref<Sort>({ column: 'date_release', direction: 'asc' });
 
 const dateFormat = (value: string | undefined) => {
   if (value) {

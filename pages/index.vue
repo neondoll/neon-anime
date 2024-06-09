@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import useAppLinks from "~/composables/useAppLinks";
+
 const appLinks = useAppLinks();
 
 const links = computed(() => {

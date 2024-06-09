@@ -1,13 +1,22 @@
-export default defineNuxtRouteMiddleware((to, from) => {
-  const user = useSupabaseUser();
+import useAppLinks from "~/composables/useAppLinks";
+import { useAuthStore } from "~/stores/auth";
 
-  if (user.value && to?.name === 'login') {
-    return navigateTo('/');
+export default defineNuxtRouteMiddleware((to, from) => {
+  const appLinks = useAppLinks();
+  const sessionAccessToken = useCookie('sessionAccessToken');
+  const { authenticated } = storeToRefs(useAuthStore());
+
+  if (sessionAccessToken.value) {
+    authenticated.value = true;
   }
 
-  if (!user.value && to?.name !== 'login') {
+  if (sessionAccessToken.value && to?.name === 'login') {
+    return navigateTo(appLinks.value.index.to);
+  }
+
+  if (!sessionAccessToken.value && to?.name !== 'login') {
     abortNavigation();
 
-    return navigateTo('/login');
+    return navigateTo(appLinks.value.login.to);
   }
-})
+});
