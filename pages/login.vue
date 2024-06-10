@@ -29,18 +29,20 @@ const onSubmit = async (event: FormSubmitEvent<Schema>) => {
 </script>
 
 <template>
-  <UContainer class="py-4">
-    <UCard class="max-w-lg mx-auto">
-      <h1 class="text-2xl font-bold text-center text-primary">Авторизация</h1>
-      <UForm class="mt-6 space-y-4" :schema="schema" :state="state" @submit="onSubmit">
-        <UFormGroup label="Email" name="email">
-          <UInput v-model="state.email" />
-        </UFormGroup>
-        <UFormGroup label="Пароль" name="password">
-          <UInput v-model="state.password" type="password" />
-        </UFormGroup>
-        <UButton block label="Войти" :loading="signInLoading" type="submit" />
-      </UForm>
-    </UCard>
-  </UContainer>
+  <ClientOnly>
+    <UContainer class="py-4">
+      <UCard class="max-w-lg mx-auto">
+        <h1 class="text-2xl font-bold text-center text-primary">Авторизация</h1>
+        <UForm class="mt-6 space-y-4" :schema="schema" :state="state" @submit="onSubmit">
+          <UFormGroup label="Email" name="email">
+            <UInput v-model="state.email" />
+          </UFormGroup>
+          <UFormGroup label="Пароль" name="password">
+            <UInput v-model="state.password" type="password" />
+          </UFormGroup>
+          <UButton block label="Войти" :loading="signInLoading" type="submit" />
+        </UForm>
+      </UCard>
+    </UContainer>
+  </ClientOnly>
 </template>

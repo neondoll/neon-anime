@@ -48,10 +48,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <UContainer class="py-4">
-    <UBreadcrumb :links="breadcrumbs" />
-    <ClientOnly>
-      <div class="flex mt-4">
+  <ClientOnly>
+    <UContainer class="py-4 space-y-4">
+      <UBreadcrumb :links="breadcrumbs" />
+      <div class="flex">
         <VCalendar
             :attributes="calendarAttributes"
             class="mx-auto"
@@ -66,6 +66,6 @@ onMounted(() => {
           </template>
         </VCalendar>
       </div>
-    </ClientOnly>
-  </UContainer>
+    </UContainer>
+  </ClientOnly>
 </template>
