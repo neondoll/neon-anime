@@ -5,12 +5,21 @@ import type { VerticalNavigationLink } from "#ui/types";
 
 const appLinks = useAppLinks();
 const modelValue = defineModel({ default: false });
+const route = useRoute();
 const { signOut } = useAuthStore();
 const { user } = storeToRefs(useAuthStore());
 
 const links = computed<VerticalNavigationLink[]>(() => {
   return [appLinks.value.index, appLinks.value.list, appLinks.value.calendar];
 });
+
+const logout = async () => {
+  const result = await signOut();
+
+  if (result) {
+    navigateTo({ name: 'login', query: { from: route.fullPath } });
+  }
+}
 </script>
 
 <template>
@@ -39,7 +48,7 @@ const links = computed<VerticalNavigationLink[]>(() => {
           <span class="group-hover:text-primary relative">{{ link.label }}</span>
         </template>
       </UVerticalNavigation>
-      <UButton v-if="user" block class="mt-4" label="Выход" @click="signOut" />
+      <UButton v-if="user" block class="mt-4" label="Выход" @click="logout" />
     </UCard>
   </USlideover>
 </template>

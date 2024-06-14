@@ -25,10 +25,10 @@ export const useAuthStore = defineStore('auth', () => {
     if (error) {
       console.error(error);
 
-      return;
+      return false;
     }
 
-    navigateTo('/login');
+    return true;
   };
 
   return { signIn, signInLoading, signOut, user };

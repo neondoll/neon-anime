@@ -6,6 +6,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import type { InferType } from 'yup';
 
 const appLinks = useAppLinks();
+const route = useRoute();
 const router = useRouter();
 const { signIn } = useAuthStore();
 const { signInLoading, user } = storeToRefs(useAuthStore());
@@ -23,7 +24,7 @@ const onSubmit = async (event: FormSubmitEvent<Schema>) => {
   await signIn(event.data);
 
   if (user) {
-    await router.push(appLinks.value.index.to);
+    await router.push(route.query.from ? (route.query.from as string) : appLinks.value.index.to);
   }
 };
 </script>
