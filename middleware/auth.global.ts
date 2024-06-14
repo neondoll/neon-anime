@@ -11,6 +11,6 @@ export default defineNuxtRouteMiddleware((to, from) => {
   if (!user.value && to?.name !== 'login') {
     abortNavigation();
 
-    return navigateTo({ ...appLinks.value.login.to, query: { from: from.fullPath } });
+    return navigateTo({ ...appLinks.value.login.to, query: { from: to.fullPath } });
   }
 });
