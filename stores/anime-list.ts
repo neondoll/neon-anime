@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { AddedAnimeItem, AnimeItem, Sort } from "~/types/types";
+import type { AddedAnimeItem, AnimeItem } from "~/types/types";
 
 export const useAnimeListStore = defineStore('anime-list', () => {
   const supabase = useSupabaseClient();
@@ -30,13 +30,14 @@ export const useAnimeListStore = defineStore('anime-list', () => {
 
     return true;
   };
-  const getAnimeList = async ({ column, direction }: Sort = { column: 'id', direction: 'asc' }) => {
+  const getAnimeList = async () => {
     animeListLoading.value = true;
 
     const { data } = await supabase
       .from('anime_list')
       .select()
-      .order(column, { ascending: direction === 'asc' });
+      .order('date_release', { ascending: true })
+      .order('date_finish', { ascending: true });
     animeList.value = data || [];
 
     animeListLoading.value = false;

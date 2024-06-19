@@ -2,7 +2,6 @@
 import useAppLinks from "~/composables/useAppLinks";
 import { useAnimeListStore } from "~/stores/anime-list";
 import type { BreadcrumbLink } from "#ui/types";
-import type { Sort } from "~/types/types";
 
 const appLinks = useAppLinks();
 const { animeList, animeListLoading } = storeToRefs(useAnimeListStore());
@@ -22,9 +21,16 @@ const breadcrumbs = computed<BreadcrumbLink[]>(() => [
   { label: appLinks.value.list.label, icon: appLinks.value.list.icon }
 ]);
 
-const filter = reactive({ name: '' });
+const filter = reactive({ name: '', statuses: [] });
 const modalAnimeAddIsOpen = ref(false);
-const sort = ref<Sort>({ column: 'date_release', direction: 'asc' });
+
+//const animeStatuses = [
+//  { id: 1, value: 'Смотрю', color: 'green' },
+//  { id: 2, value: 'В планах', color: 'fuchsia' },
+//  { id: 3, value: 'Просмотрено', color: 'indigo' },
+//  { id: 4, value: 'Отложено', color: 'amber' },
+//  { id: 5, value: 'Брошено', color: 'red' }
+//];
 
 const dateFormat = (value: string | undefined) => {
   if (value) {
@@ -36,9 +42,12 @@ const dateFormat = (value: string | undefined) => {
   return undefined;
 };
 
-watch(() => sort.value, (value) => {
-  getAnimeList(value);
-}, { immediate: true });
+onMounted(() => {
+  getAnimeList();
+});
+//watch(() => filter.statuses, (value) => {
+//  console.log(value);
+//})
 </script>
 
 <template>
@@ -50,19 +59,39 @@ watch(() => sort.value, (value) => {
           :ui="{ body: { base: 'flex gap-4' } }"
       >
         <UButton icon="i-heroicons-plus-20-solid" @click="modalAnimeAddIsOpen = true" />
-        <UInput v-model="filter.name" class="flex-1" input-class="pe-9" placeholder="Фильтр названий...">
-          <template #trailing v-if="filter.name">
-            <UButton
-                class="pointer-events-auto"
-                color="gray"
-                icon="i-heroicons-x-mark-20-solid"
-                :padded="false"
-                size="xs"
-                variant="ghost"
-                @click="filter.name = ''"
-            />
-          </template>
-        </UInput>
+        <div class="flex-1 grid sm:grid-cols-1 gap-4">
+          <UInput v-model="filter.name" class="flex-1" input-class="pe-9" placeholder="Фильтр названий...">
+            <template #trailing v-if="filter.name">
+              <UButton
+                  class="pointer-events-auto"
+                  color="gray"
+                  icon="i-heroicons-x-mark-20-solid"
+                  :padded="false"
+                  size="xs"
+                  variant="ghost"
+                  @click="filter.name = ''"
+              />
+            </template>
+          </UInput>
+          <!--<USelectMenu
+              v-model="filter.statuses"
+              class="flex-1"
+              multiple
+              option-attribute="value"
+              :options="animeStatuses"
+          >
+            <template #label>
+            <span v-if="filter.statuses.length" class="truncate">{{
+                filter.statuses.map((item) => item.value).join(', ')
+              }}</span>
+              <span v-else class="text-gray-400 dark:text-gray-500">Фильтр статусов...</span>
+            </template>
+            <template #option="{ option }">
+              <span class="w-3 h-3 rounded-full" :class="`bg-${option.color}-500 dark:bg-${option.color}-400`" />
+              <span class="truncate">{{ option.value }}</span>
+            </template>
+          </USelectMenu>-->
+        </div>
       </UCard>
       <UCard
           v-if="animeListLoading"
@@ -75,39 +104,43 @@ watch(() => sort.value, (value) => {
         <p class="text-sm text-gray-900 dark:text-white text-center">Загрузка...</p>
       </UCard>
       <div v-else class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        <UCard
+        <UChip
             v-for="animeItem in animeListFiltered"
             :key="`anime-${animeItem.id}`"
-            :ui="{
-            base: 'flex flex-col justify-between text-gray-900 dark:text-white',
+            color="primary"
+            :show="false"
+            size="lg"
+        >
+          <UCard :ui="{
+            base: 'flex flex-col justify-between w-full h-full text-gray-900 dark:text-white',
             divide: 'divide-y-0',
             body: { base: 'flex justify-between items-end gap-x-2' },
             header: { base: 'flex justify-between items-start gap-x-2', padding: 'pb-0' }
-          }"
-        >
-          <template #header>
-            <h2 class="text-lg/tight font-semibold">{{ animeItem.name }}</h2>
-            <UBadge
-                v-if="animeItem.episodes"
-                class="text-sm/none"
-                :label="animeItem.episodes"
-                :ui="{ rounded: 'rounded-full' }"
-            />
-          </template>
-          <div>
-            <p v-if="animeItem.date_release">
-              <span class="font-medium text-primary-700 dark:text-primary-300">{{ labels.date_release }}:</span>
-              {{ dateFormat(animeItem.date_release) }}
-            </p>
-            <p v-if="animeItem.date_finish">
-              <span class="font-medium text-primary-700 dark:text-primary-300">{{ labels.date_finish }}:</span>
-              {{ dateFormat(animeItem.date_finish) }}
-            </p>
-          </div>
-          <span class="text-gray-400 dark:text-gray-600">#{{ animeItem.id }}</span>
-        </UCard>
+          }">
+            <template #header>
+              <h2 class="text-lg/tight font-semibold">{{ animeItem.name }}</h2>
+              <UBadge
+                  v-if="animeItem.episodes"
+                  class="text-sm/none"
+                  :label="animeItem.episodes"
+                  :ui="{ rounded: 'rounded-full' }"
+              />
+            </template>
+            <div>
+              <p v-if="animeItem.date_release">
+                <span class="font-medium text-primary-700 dark:text-primary-300">{{ labels.date_release }}:</span>
+                {{ dateFormat(animeItem.date_release) }}
+              </p>
+              <p v-if="animeItem.date_finish">
+                <span class="font-medium text-primary-700 dark:text-primary-300">{{ labels.date_finish }}:</span>
+                {{ dateFormat(animeItem.date_finish) }}
+              </p>
+            </div>
+            <span class="text-gray-400 dark:text-gray-600">#{{ animeItem.id }}</span>
+          </UCard>
+        </UChip>
       </div>
-      <ModalAnimeAdd v-model="modalAnimeAddIsOpen" @success="getAnimeList(sort)" />
+      <ModalAnimeAdd v-model="modalAnimeAddIsOpen" @success="getAnimeList" />
     </UContainer>
   </ClientOnly>
 </template>

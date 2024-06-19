@@ -19,7 +19,7 @@ const logout = async () => {
   if (result) {
     navigateTo({ name: 'login', query: { from: route.fullPath } });
   }
-}
+};
 </script>
 
 <template>
