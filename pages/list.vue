@@ -118,7 +118,7 @@ onMounted(() => {
             header: { base: 'flex justify-between items-start gap-x-2', padding: 'pb-0' }
           }">
             <template #header>
-              <h2 class="text-lg/tight font-semibold">{{ animeItem.name }}</h2>
+              <h2 class="text-lg/tight font-semibold line-clamp-2">{{ animeItem.name }}</h2>
               <UBadge
                   v-if="animeItem.episodes"
                   class="text-sm/none"
