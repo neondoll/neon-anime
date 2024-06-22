@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   app: {
-    baseURL: "/neon-anime/",
+    baseURL: process.env.APP_ENV === "local" ? undefined : "/neon-anime/",
   },
   devtools: {
     enabled: false,

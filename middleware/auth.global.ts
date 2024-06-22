@@ -1,6 +1,6 @@
 import useAppLinks from "~/composables/useAppLinks";
 
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware((to, _) => {
   const appLinks = useAppLinks();
   const user = useSupabaseUser();
 

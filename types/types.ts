@@ -13,12 +13,18 @@ export interface AnimeItem {
   date_finish?: string;
 }
 
+export interface AnimeStatus {
+  id: number;
+  value: string;
+  color?: string;
+}
+
+export interface AnimeUserStatus {
+  anime_id: AnimeItem['id'];
+  status_id: AnimeStatus['id'];
+}
+
 export interface Credentials {
   email: string;
   password: string;
-}
-
-export interface Sort {
-  column: string;
-  direction: "asc" | "desc";
 }
