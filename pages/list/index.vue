@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import dateFormat from "~/utils/dateFormat";
 import LoadingCard from "~/components/LoadingCard.vue";
-import useAppLinks from "~/composables/useAppLinks";
+import ModalAnimeAdd from "~/components/ModalAnimeAdd.vue";
 import { useAnimeListStore } from "~/stores/anime-list";
 import { useAnimeStatusesStore } from "~/stores/anime-statuses";
 import { useAnimeUserStatusesStore } from "~/stores/anime-user-statuses";
+import { useAppLinks } from "~/composables/useAppLinks";
 import type { AnimeItem as BaseAnimeItem, AnimeStatus } from "~/types/types";
 import type { BreadcrumbLink } from "#ui/types";
 
 interface AnimeItem extends BaseAnimeItem {
   status?: AnimeStatus;
 }
+
+type AnimeFilter = { name: string; statuses: AnimeStatus[]; statusesHide: boolean };
 
 const appLinks = useAppLinks();
 const { animeList: baseAnimeList, animeListLoading } = storeToRefs(useAnimeListStore());
@@ -43,7 +46,11 @@ const animeListFiltered = computed<AnimeItem[]>(() => {
 
   if (filter.statuses.length) {
     filteredData = filteredData.filter((animeItem) => {
-      return animeItem.status && filter.statuses.includes(animeItem.status);
+      if (filter.statusesHide) {
+        return !animeItem.status || !filter.statuses.includes(animeItem.status);
+      } else {
+        return animeItem.status && filter.statuses.includes(animeItem.status);
+      }
     });
   }
 
@@ -56,7 +63,7 @@ const breadcrumbLinks = computed<BreadcrumbLink[]>(() => {
   ];
 });
 
-const filter = reactive<{ name: string; statuses: AnimeStatus[] }>({ name: '', statuses: [] });
+const filter = reactive<AnimeFilter>({ name: '', statuses: [], statusesHide: false });
 const modalAnimeAddIsOpen = ref(false);
 
 onMounted(async () => {
@@ -78,7 +85,7 @@ onMounted(async () => {
         :ui="{ body: { base: 'flex gap-4' } }"
       >
         <UButton icon="i-heroicons-plus-20-solid" @click="modalAnimeAddIsOpen = true"/>
-        <div class="flex-1 grid sm:grid-cols-1 gap-4">
+        <div class="flex-1 grid sm:grid-cols-1" style="gap:inherit">
           <UInput v-model="filter.name" class="flex-1" input-class="pe-9" placeholder="Фильтр названий...">
             <template #trailing v-if="filter.name">
               <UButton
@@ -92,24 +99,27 @@ onMounted(async () => {
               />
             </template>
           </UInput>
-          <USelectMenu
-            v-model="filter.statuses"
-            class="flex-1"
-            multiple
-            option-attribute="value"
-            :options="animeStatuses"
-          >
-            <template #label>
-              <span v-if="filter.statuses.length" class="truncate">
-                {{ filter.statuses.map((item) => item.value).join(', ') }}
-              </span>
-              <span v-else class="text-gray-400 dark:text-gray-500">Фильтр статусов...</span>
-            </template>
-            <template #option="{ option }">
-              <span class="w-3 h-3 rounded-full" :class="`bg-${option.color}-500 dark:bg-${option.color}-400`"/>
-              <span class="truncate">{{ option.value }}</span>
-            </template>
-          </USelectMenu>
+          <div class="flex items-center" style="gap:inherit">
+            <USelectMenu v-model="filter.statuses" class="flex-1" multiple option-attribute="value"
+                         :options="animeStatuses">
+              <template #label>
+                <span v-if="filter.statuses.length" class="truncate">
+                  {{ filter.statuses.map((item) => item.value).join(', ') }}
+                </span>
+                <span v-else class="text-gray-400 dark:text-gray-500">Фильтр статусов...</span>
+              </template>
+              <template #option="{ option }">
+                <span class="w-3 h-3 rounded-full" :class="`bg-${option.color}-500 dark:bg-${option.color}-400`"/>
+                <span class="truncate">{{ option.value }}</span>
+              </template>
+            </USelectMenu>
+            <UToggle
+              v-model="filter.statusesHide"
+              off-icon="i-heroicons-eye-solid"
+              on-icon="i-heroicons-eye-slash-solid"
+              size="lg"
+            />
+          </div>
         </div>
       </UCard>
       <LoadingCard v-if="animeListLoading && animeUserStatusesLoading"/>

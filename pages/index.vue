@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import useAppLinks from "~/composables/useAppLinks";
+import { useAppLinks } from "~/composables/useAppLinks";
 
 const appLinks = useAppLinks();
 

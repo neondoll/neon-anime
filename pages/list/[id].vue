@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import dateFormat from "~/utils/dateFormat";
 import LoadingCard from "~/components/LoadingCard.vue";
-import useAppLinks from "~/composables/useAppLinks";
 import { useAnimeListStore } from "~/stores/anime-list";
 import { useAnimeStatusesStore } from "~/stores/anime-statuses";
 import { useAnimeUserStatusesStore } from "~/stores/anime-user-statuses";
+import { useAppLinks } from "~/composables/useAppLinks";
 import type { AnimeStatus } from "~/types/types";
 import type { BreadcrumbLink, DropdownItem } from "#ui/types";
 

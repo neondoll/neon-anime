@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import useAppLinks from "~/composables/useAppLinks";
 import { object, string } from 'yup';
+import { useAppLinks } from "~/composables/useAppLinks";
 import { useAuthStore } from "~/stores/auth";
 import type { FormSubmitEvent } from '#ui/types';
 import type { InferType } from 'yup';

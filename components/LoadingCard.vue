@@ -1,7 +1,3 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
   <UCard :ui="{
     body: { base: 'flex flex-col items-center justify-center flex-1', padding: 'px-6 py-14 sm:px-14' }

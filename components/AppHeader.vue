@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import useAppLinks from "~/composables/useAppLinks";
+import { useAppLinks } from "~/composables/useAppLinks";
 import { useAuthStore } from "~/stores/auth";
 
 const appConfig = useAppConfig();
