@@ -80,9 +80,8 @@ export const useAnimeUserStatusesStore = defineStore(
     };
 
     return {
-      addAnimeUserStatus, animeUserStatus, animeUserStatusLoading, animeUserStatuses,
-      animeUserStatusesLoading, clearAnimeUserStatus, editAnimeUserStatus, getAnimeUserStatus,
-      getAnimeUserStatuses
+      addAnimeUserStatus, animeUserStatus, animeUserStatusLoading, animeUserStatuses, animeUserStatusesLoading,
+      clearAnimeUserStatus, editAnimeUserStatus, getAnimeUserStatus, getAnimeUserStatuses
     };
   }
 );

@@ -14,10 +14,10 @@ watch(() => user.value, (value) => {
 
 <template>
   <div class="flex flex-col min-h-screen">
-    <AppHeader @menuClick="isOpen = true" />
-    <AppSlideover v-if="user" v-model="isOpen" />
+    <AppHeader @menuClick="isOpen = true"/>
+    <AppSlideover v-if="user" v-model="isOpen"/>
     <AppMain>
-      <slot />
+      <slot/>
     </AppMain>
   </div>
 </template>

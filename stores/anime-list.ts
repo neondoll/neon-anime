@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { AddedAnimeItem, AnimeItem } from "~/types/types";
+import type { AnimeItem, AnimeItemForm } from "~/types/types";
 
 export const useAnimeListStore = defineStore(
   'anime-list',
@@ -18,7 +18,7 @@ export const useAnimeListStore = defineStore(
       name: 'Название'
     };
 
-    const addAnimeItem = async (value: AddedAnimeItem) => {
+    const addAnimeItem = async (value: AnimeItemForm) => {
       const { data, error } = await supabase
         .from('anime_list')
         .insert([value] as never[])
@@ -31,6 +31,23 @@ export const useAnimeListStore = defineStore(
       }
 
       console.log('addAnimeItem', data);
+
+      return true;
+    };
+    const editAnimeItem = async (id: AnimeItem['id'], value: AnimeItemForm) => {
+      const { data, error } = await supabase
+        .from('anime_list')
+        .update(value as never)
+        .eq('id', id)
+        .select();
+
+      if (error) {
+        console.error('editAnimeItem', error);
+
+        return false;
+      }
+
+      console.log('editAnimeItem', data);
 
       return true;
     };
@@ -59,8 +76,8 @@ export const useAnimeListStore = defineStore(
     };
 
     return {
-      addAnimeItem, animeItem, animeItemLoading, animeList, animeListLoading, getAnimeItem,
-      getAnimeList, labels
+      addAnimeItem, animeItem, animeItemLoading, animeList, animeListLoading, editAnimeItem, getAnimeItem, getAnimeList,
+      labels
     };
   }
 );

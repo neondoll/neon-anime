@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import dateFormat from "~/utils/dateFormat";
 import LoadingCard from "~/components/LoadingCard.vue";
+import ModalAnimeForm from "~/components/ModalAnimeForm.vue";
 import { useAnimeListStore } from "~/stores/anime-list";
 import { useAnimeStatusesStore } from "~/stores/anime-statuses";
 import { useAnimeUserStatusesStore } from "~/stores/anime-user-statuses";
@@ -31,6 +32,7 @@ const breadcrumbLinks = computed<BreadcrumbLink[]>(() => {
       : { label: animeItem.value ? animeItem.value.name : '(Неизвестно)' }
   ];
 });
+const modalAnimeFormIsOpen = ref(false);
 const statusesDropdown = computed<DropdownItem[][]>(() => {
   return [
     animeStatuses.value.map((animeStatus) => ({
@@ -67,6 +69,13 @@ watch(() => route.params.id, async (value) => {
     await getAnimeUserStatus(animeItem.value.id);
   }
 }, { immediate: true });
+
+const Paragraph = (props: { label: string; value: any }) => {
+  return h('p', [
+    h('span', { class: 'font-medium text-primary-700 dark:text-primary-300' }, props.label + ': '),
+    props.value
+  ]);
+};
 </script>
 
 <template>
@@ -74,49 +83,38 @@ watch(() => route.params.id, async (value) => {
     <UContainer class="py-4 space-y-4">
       <UBreadcrumb :links="breadcrumbLinks"/>
       <LoadingCard v-if="animeItemLoading && animeUserStatusLoading"/>
-      <UCard
-        v-else-if="animeItem"
-        :ui="{
+      <template v-else-if="animeItem">
+        <UCard :ui="{
           divide: 'divide-y-0',
-          header: { base: 'flex justify-between items-start gap-x-2', padding: 'pb-0' }
-        }"
-      >
-        <template #header>
-          <h1 class="text-xl/tight font-semibold">{{ animeItem.name }}</h1>
-          <UDropdown :items="statusesDropdown">
-            <UBadge
-              :color="animeItemStatus ? animeItemStatus.color : 'black'"
-              :label="animeItemStatus ? animeItemStatus.value : 'Неуказанно'"
-            />
-            <template #item="{ item }">
-              <span
-                v-if="item.color"
-                class="w-3 h-3 rounded-full"
-                :class="`bg-${item.color}-500 dark:bg-${item.color}-400`"
-              />
-              <span>{{ item.label }}</span>
-            </template>
-          </UDropdown>
-        </template>
-        <div>
-          <p v-if="animeItem.episodes">
-            <span class="font-medium text-primary-700 dark:text-primary-300">{{ labels.episodes }}:</span>
-            {{ animeItem.episodes }}
-          </p>
-          <p v-if="animeItem.date_release">
-            <span class="font-medium text-primary-700 dark:text-primary-300">{{ labels.date_release }}:</span>
-            {{ dateFormat(animeItem.date_release) }}
-          </p>
-          <p v-if="animeItem.date_finish">
-            <span class="font-medium text-primary-700 dark:text-primary-300">{{ labels.date_finish }}:</span>
-            {{ dateFormat(animeItem.date_finish) }}
-          </p>
-        </div>
-      </UCard>
-      <UAlert
-        v-else
-        title="Неизвестное аниме"
-      />
+          header: { base: 'flex justify-between items-start gap-2', padding: 'pb-0' }
+        }">
+          <template #header>
+            <h1 class="text-xl/tight font-semibold">{{ animeItem.name }}</h1>
+            <div class="flex items-start" style="gap:inherit">
+              <UDropdown :items="statusesDropdown">
+                <UBadge :color="animeItemStatus ? animeItemStatus.color : 'black'"
+                        :label="animeItemStatus ? animeItemStatus.value : 'Неуказанно'"/>
+                <template #item="{ item }">
+                  <span v-if="item.color" class="w-3 h-3 rounded-full"
+                        :class="`bg-${item.color}-500 dark:bg-${item.color}-400`"/>
+                  <span>{{ item.label }}</span>
+                </template>
+              </UDropdown>
+              <UButton icon="i-heroicons-pencil-solid" @click="modalAnimeFormIsOpen = true"/>
+            </div>
+          </template>
+          <div>
+            <Paragraph v-if="animeItem.episodes" :label="labels.episodes" :value="animeItem.episodes"/>
+            <Paragraph v-if="animeItem.date_release" :label="labels.date_release"
+                       :value="dateFormat(animeItem.date_release)"/>
+            <Paragraph v-if="animeItem.date_finish" :label="labels.date_finish"
+                       :value="dateFormat(animeItem.date_finish)"/>
+          </div>
+        </UCard>
+        <ModalAnimeForm v-model="modalAnimeFormIsOpen" :item="animeItem"
+                        @success="getAnimeItem(Number(route.params.id))"/>
+      </template>
+      <UAlert v-else title="Неизвестное аниме"/>
     </UContainer>
   </ClientOnly>
 </template>
