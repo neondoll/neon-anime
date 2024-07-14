@@ -1,35 +1,53 @@
 import { defineStore } from 'pinia';
 import type { Credentials } from "~/types/types";
 
-export const useAuthStore = defineStore('auth', () => {
-  // const session = useSupabaseSession();
-  const supabase = useSupabaseClient();
-  const user = useSupabaseUser();
+export const useAuthStore = defineStore(
+  'auth',
+  () => {
+    const supabase = useSupabaseClient();
 
-  const signInLoading = ref(false);
+    const signInLoading = ref(false);
+    const user = ref(undefined);
 
-  const signIn = async ({ email, password }: Credentials) => {
-    signInLoading.value = true;
+    const getCurrentUser = async () => {
+      user.value = await $fetch('/auth/user');
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+      return user.value;
+    };
+    const signIn = async ({ email, password }: Credentials) => {
+      const route = useRoute();
 
-    signInLoading.value = false;
+      signInLoading.value = true;
 
-    if (error) {
-      console.error(error);
-    }
-  };
-  const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-    if (error) {
-      console.error(error);
+      signInLoading.value = false;
 
-      return false;
-    }
+      if (error) {
+        console.error(error);
+      } else {
+        user.value = data.user;
+        navigateTo(route.query.from ? route.query.from as string : { name: 'index' });
+        await getCurrentUser();
+      }
+    };
+    const signOut = async () => {
+      const route = useRoute();
 
-    return true;
-  };
+      const { error } = await supabase.auth.signOut();
 
-  return { signIn, signInLoading, signOut, user };
-});
+      if (error) {
+        console.error(error);
+      } else {
+        user.value = undefined;
+
+        if (route.name !== 'login') {
+          navigateTo({ name: 'login', query: { from: route.fullPath } });
+          console.log('logout...');
+        }
+      }
+    };
+
+    return { getCurrentUser, signIn, signInLoading, signOut, user };
+  }
+);

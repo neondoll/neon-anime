@@ -17,6 +17,7 @@ jobs:
           node-version-file: .nvmrc
       - uses: ozaytsev86/create-env-file@v1
         with:
+          ENV_APP_ENV: production
           ENV_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           ENV_SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       # Pick your own package manager and build script

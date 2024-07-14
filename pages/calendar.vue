@@ -8,9 +8,16 @@ const appLinks = useAppLinks();
 const colorMode = useColorMode();
 const { animeList } = storeToRefs(useAnimeListStore());
 const { getAnimeList } = useAnimeListStore();
-const { mapCurrent } = useScreens({ xs: '0px', sm: '534px', md: '800px', lg: '1066px' });
+const { mapCurrent } = useScreens({
+  xs: '0px', sm: '534px', md: '800px', lg: '1066px'
+});
 
-const calendarColors = ['blue', /*'gray',*/ 'green', 'indigo', 'orange', 'pink', 'purple', 'red', 'teal', 'yellow'];
+const calendar = ref();
+const calendarColors = [
+  'blue', /*'gray',*/ 'green', 'indigo', 'orange', 'pink', 'purple', 'red', 'teal',
+  'yellow'
+];
+const calendarColumns = mapCurrent({ sm: 2, md: 3, lg: 4 }, 1);
 
 const breadcrumbs = computed<BreadcrumbLink[]>(() => {
   return [
@@ -20,12 +27,11 @@ const breadcrumbs = computed<BreadcrumbLink[]>(() => {
 });
 const calendarAttributes = computed(() => {
   return [
-    // { key: 'today', content: { color: 'green', style: { fontStyle: 'italic' } }, dates: new Date() },
     { key: 'today', highlight: 'gray', dates: new Date() },
     ...animeList.value
       .filter((animeItem) => Boolean(animeItem.date_release || animeItem.date_finish))
       .map((animeItem, animeIndex) => ({
-        key: `anime-${animeItem.id}`,
+        key: `anime-${ animeItem.id }`,
         highlight: calendarColors[animeIndex % calendarColors.length],
         popover: { label: animeItem.name },
         dates: {
@@ -36,9 +42,6 @@ const calendarAttributes = computed(() => {
   ];
 });
 const isDark = computed(() => colorMode.value === 'dark');
-
-const calendar = ref();
-const calendarColumns = mapCurrent({ sm: 2, md: 3, lg: 4 }, 1);
 
 const calendarMoveToday = () => {
   if (calendar.value) {
@@ -54,13 +57,22 @@ onMounted(() => {
 <template>
   <ClientOnly>
     <UContainer class="py-4 space-y-4">
-      <UBreadcrumb :links="breadcrumbs"/>
+      <UBreadcrumb :links="breadcrumbs" />
       <div class="flex">
-        <VCalendar :attributes="calendarAttributes" class="mx-auto" :columns="calendarColumns" :is-dark="isDark"
-                   ref="calendar">
+        <VCalendar
+          :attributes="calendarAttributes"
+          class="mx-auto"
+          :columns="calendarColumns"
+          :is-dark="isDark"
+          ref="calendar"
+        >
           <template #footer>
             <div class="w-full px-4 pb-3">
-              <UButton block label="Сегодня" @click="calendarMoveToday"/>
+              <UButton
+                block
+                label="Сегодня"
+                @click="calendarMoveToday"
+              />
             </div>
           </template>
         </VCalendar>

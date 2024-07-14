@@ -4,4 +4,4 @@ export default defineAppConfig({
     breadcrumb: { default: { divider: 'i-heroicons-chevron-right-20-solid' } },
     icons: { dynamic: true }
   }
-})
+});

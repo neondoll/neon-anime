@@ -1,16 +1,21 @@
-import { useAppLinks } from "~/composables/useAppLinks";
+import { useAuthStore } from "~/stores/auth";
 
-export default defineNuxtRouteMiddleware((to, _) => {
-  const appLinks = useAppLinks();
-  const user = useSupabaseUser();
+export default defineNuxtRouteMiddleware(async (to, _) => {
+  const authStore = useAuthStore();
 
-  if (user.value && to?.name === 'login') {
-    return navigateTo(to.query.from ? (to.query.from as string) : appLinks.value.index.to);
+  if (!authStore.user) {
+    await authStore.getCurrentUser();
   }
 
-  if (!user.value && to?.name !== 'login') {
-    abortNavigation();
+  if (!authStore.user) {
+    if (to?.name !== 'login') {
+      abortNavigation();
 
-    return navigateTo({ ...appLinks.value.login.to, query: { from: to.fullPath } });
+      return navigateTo({ name: 'login', query: { from: to.fullPath } });
+    }
+  }
+
+  if (to?.name === 'login' && authStore.user) {
+    return navigateTo(to.query.from ? to.query.from as string : { name: 'index' });
   }
 });

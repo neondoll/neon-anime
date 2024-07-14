@@ -76,8 +76,8 @@ export const useAnimeListStore = defineStore(
     };
 
     return {
-      addAnimeItem, animeItem, animeItemLoading, animeList, animeListLoading, editAnimeItem, getAnimeItem, getAnimeList,
-      labels
+      addAnimeItem, animeItem, animeItemLoading, animeList, animeListLoading,
+      editAnimeItem, getAnimeItem, getAnimeList, labels
     };
   }
 );
