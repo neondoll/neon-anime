@@ -7,10 +7,12 @@ export const useAuthStore = defineStore(
     const supabase = useSupabaseClient();
 
     const signInLoading = ref(false);
-    const user = ref(undefined);
+    const user = ref(null);
 
     const getCurrentUser = async () => {
-      user.value = await $fetch('/api/auth/user');
+      const { data } = await supabase.auth.getUser();
+
+      user.value = data.user;
 
       return user.value;
     };
@@ -39,7 +41,7 @@ export const useAuthStore = defineStore(
       if (error) {
         console.error(error);
       } else {
-        user.value = undefined;
+        user.value = null;
 
         if (route.name !== 'login') {
           navigateTo({ name: 'login', query: { from: route.fullPath } });
