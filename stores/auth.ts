@@ -10,11 +10,7 @@ export const useAuthStore = defineStore(
     const user = ref(undefined);
 
     const getCurrentUser = async () => {
-      const { data } = await useFetch('/api/auth/user');
-
-      //console.log(data);
-
-      user.value = data;
+      user.value = await $fetch('/api/auth/user');
 
       return user.value;
     };
